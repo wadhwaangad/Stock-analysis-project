@@ -1,0 +1,377 @@
+/* Stock Analysis App - Black & Green Theme */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    color: #00ff00;
+    font-family: 'Consolas', 'Courier New', monospace;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+h1 {
+    color: #00ff00;
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px #00ff00;
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    color: #00ff00;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+h3 {
+    color: #00ff00;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+p {
+    color: #888;
+    margin-bottom: 1rem;
+}
+
+/* Search Section */
+.search-section {
+    margin-bottom: 2rem;
+}
+
+.search-box {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+input[type="text"] {
+    background: #111;
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    min-width: 200px;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    box-shadow: 0 0 10px #00ff00;
+    border-color: #00ff41;
+}
+
+button {
+    background: linear-gradient(45deg, #00ff00, #00cc00);
+    color: #000;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+button:hover {
+    background: linear-gradient(45deg, #00cc00, #009900);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Cards */
+.card {
+    background: rgba(17, 17, 17, 0.9);
+    border: 2px solid #00ff00;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Results Container */
+.results-container {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.results-container.hidden {
+    display: none;
+}
+
+/* Quote Data */
+.quote-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #333;
+}
+
+.quote-item:last-child {
+    border-bottom: none;
+}
+
+/* Prediction Data */
+.prediction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #333;
+}
+
+.prediction-item:last-child {
+    border-bottom: none;
+}
+
+/* Technical Analysis Grid */
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.tech-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+/* Labels and Values */
+.label {
+    color: #ccc;
+    font-weight: bold;
+}
+
+.value {
+    color: #00ff00;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.value.positive {
+    color: #00ff00;
+}
+
+.value.negative {
+    color: #ff3333;
+}
+
+/* Signals */
+.signal {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.signal.buy {
+    background: #00ff00;
+    color: #000;
+}
+
+.signal.sell {
+    background: #ff3333;
+    color: #fff;
+}
+
+.signal.hold {
+    background: #ffaa00;
+    color: #000;
+}
+
+.signal.bullish {
+    color: #00ff00;
+}
+
+.signal.bearish {
+    color: #ff3333;
+}
+
+.signal.neutral {
+    color: #ffaa00;
+}
+
+.signal.uptrend {
+    color: #00ff00;
+}
+
+.signal.downtrend {
+    color: #ff3333;
+}
+
+.signal.oversold {
+    color: #00ff00;
+}
+
+.signal.overbought {
+    color: #ff3333;
+}
+
+.signal.upper, .signal.lower, .signal.middle {
+    color: #00ff00;
+}
+
+/* Loading Indicator */
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #00ff00;
+}
+
+.loading.hidden {
+    display: none;
+}
+
+.spinner {
+    border: 4px solid #333;
+    border-top: 4px solid #00ff00;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error Messages */
+.error {
+    background: rgba(255, 51, 51, 0.1);
+    border: 2px solid #ff3333;
+    color: #ff3333;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.error.hidden {
+    display: none;
+}
+
+/* Popular Stocks */
+.popular-stocks {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.stock-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.stock-buttons button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    min-width: 80px;
+}
+
+/* Back Button */
+.back-button {
+    color: #00ff00;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #00ff00;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background: #00ff00;
+    color: #000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .search-box {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    input[type="text"] {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .tech-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stock-buttons {
+        gap: 0.25rem;
+    }
+    
+    .stock-buttons button {
+        min-width: 60px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    .card {
+        padding: 1rem;
+    }
+    
+    .quote-item, .prediction-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+}

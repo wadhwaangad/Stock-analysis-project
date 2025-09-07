@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ symbol }} - Stock Analysis</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📈 {{ symbol }} Analysis</h1>
+            <a href="/" class="back-button">← Back to Dashboard</a>
+        </header>
+
+        <div id="stockAnalysis">
+            <div class="loading">Loading {{ symbol }} analysis...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadAnalysis() {
+            const symbol = '{{ symbol }}';
+            try {
+                const response = await fetch(`/api/dashboard/${symbol}`);
+                const data = await response.json();
+                
+                // Display detailed analysis here
+                document.getElementById('stockAnalysis').innerHTML = `
+                    <div class="detailed-analysis">
+                        <h2>Detailed Analysis for ${symbol}</h2>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('stockAnalysis').innerHTML = `
+                    <div class="error">Error loading analysis: ${error.message}</div>
+                `;
+            }
+        }
+
+        window.addEventListener('load', loadAnalysis);
+    </script>
+</body>
+</html>

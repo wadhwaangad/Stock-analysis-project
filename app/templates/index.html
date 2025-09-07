@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analysis App</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Stock Analysis App</h1>
+            <p>Real-time stock analysis with AI predictions</p>
+        </header>
+
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="symbolInput" placeholder="Enter stock symbol (e.g., AAPL)" value="AAPL">
+                <button onclick="analyzeStock()">Analyze Stock</button>
+            </div>
+        </div>
+
+        <div id="loadingIndicator" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Analyzing stock data...</p>
+        </div>
+
+        <div id="errorMessage" class="error hidden"></div>
+
+        <div id="resultsContainer" class="results-container hidden">
+            <!-- Quote Section -->
+            <div class="card">
+                <h2>📊 Current Quote</h2>
+                <div id="quoteData">
+                    <div class="quote-item">
+                        <span class="label">Price:</span>
+                        <span id="currentPrice" class="value">--</span>
+                    </div>
+                    <div class="quote-item">
+                        <span class="label">Change:</span>
+                        <span id="priceChange" class="value">--</span>
+                    </div>
+                    <div class="quote-item">
+                        <span class="label">Volume:</span>
+                        <span id="volume" class="value">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prediction Section -->
+            <div class="card">
+                <h2>🔮 AI Prediction</h2>
+                <div id="predictionData">
+                    <div class="prediction-item">
+                        <span class="label">Predicted Price:</span>
+                        <span id="predictedPrice" class="value">--</span>
+                    </div>
+                    <div class="prediction-item">
+                        <span class="label">Signal:</span>
+                        <span id="tradingSignal" class="signal">--</span>
+                    </div>
+                    <div class="prediction-item">
+                        <span class="label">Expected Change:</span>
+                        <span id="expectedChange" class="value">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Analysis Section -->
+            <div class="card">
+                <h2>📈 Technical Analysis</h2>
+                <div id="technicalData">
+                    <div class="tech-grid">
+                        <div class="tech-item">
+                            <span class="label">RSI:</span>
+                            <span id="rsi" class="value">--</span>
+                            <span id="rsiSignal" class="signal">--</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="label">MACD:</span>
+                            <span id="macd" class="value">--</span>
+                            <span id="macdSignal" class="signal">--</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="label">Trend:</span>
+                            <span id="trend" class="signal">--</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="label">Bollinger:</span>
+                            <span id="bbSignal" class="signal">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="popular-stocks">
+            <h3>Popular Stocks</h3>
+            <div class="stock-buttons">
+                <button onclick="quickAnalyze('AAPL')">AAPL</button>
+                <button onclick="quickAnalyze('GOOGL')">GOOGL</button>
+                <button onclick="quickAnalyze('MSFT')">MSFT</button>
+                <button onclick="quickAnalyze('TSLA')">TSLA</button>
+                <button onclick="quickAnalyze('AMZN')">AMZN</button>
+                <button onclick="quickAnalyze('META')">META</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function analyzeStock() {
+            const symbol = document.getElementById('symbolInput').value.toUpperCase();
+            if (!symbol) return;
+
+            showLoading();
+            hideError();
+            hideResults();
+
+            try {
+                const response = await fetch(`/api/dashboard/${symbol}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayResults(data, symbol);
+            } catch (error) {
+                showError(`Error analyzing ${symbol}: ${error.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function quickAnalyze(symbol) {
+            document.getElementById('symbolInput').value = symbol;
+            analyzeStock();
+        }
+
+        function displayResults(data, symbol) {
+            try {
+                // Parse JSON strings if needed
+                const quote = typeof data.quote === 'string' ? JSON.parse(data.quote) : data.quote;
+                const prediction = typeof data.prediction === 'string' ? JSON.parse(data.prediction) : data.prediction;
+                const technical = typeof data.technical === 'string' ? JSON.parse(data.technical) : data.technical;
+
+                // Update quote data
+                document.getElementById('currentPrice').textContent = `$${quote.price?.toFixed(2) || '--'}`;
+                document.getElementById('priceChange').textContent = `${quote.change?.toFixed(2) || '--'} (${quote.change_percent || '--'}%)`;
+                document.getElementById('priceChange').className = `value ${(quote.change || 0) >= 0 ? 'positive' : 'negative'}`;
+                document.getElementById('volume').textContent = (quote.volume || 0).toLocaleString();
+
+                // Update prediction data
+                document.getElementById('predictedPrice').textContent = `$${prediction.predicted_price?.toFixed(2) || '--'}`;
+                document.getElementById('tradingSignal').textContent = prediction.signal || '--';
+                document.getElementById('tradingSignal').className = `signal ${(prediction.signal || '').toLowerCase()}`;
+                document.getElementById('expectedChange').textContent = `${prediction.price_change_pct?.toFixed(2) || '--'}%`;
+                document.getElementById('expectedChange').className = `value ${(prediction.price_change_pct || 0) >= 0 ? 'positive' : 'negative'}`;
+
+                // Update technical analysis
+                if (technical.analysis) {
+                    document.getElementById('rsi').textContent = technical.analysis.rsi?.toFixed(2) || '--';
+                    document.getElementById('rsiSignal').textContent = technical.interpretation?.rsi_signal || '--';
+                    document.getElementById('rsiSignal').className = `signal ${(technical.interpretation?.rsi_signal || '').toLowerCase()}`;
+                    
+                    document.getElementById('macd').textContent = technical.analysis.macd?.toFixed(4) || '--';
+                    document.getElementById('macdSignal').textContent = technical.interpretation?.macd_signal || '--';
+                    document.getElementById('macdSignal').className = `signal ${(technical.interpretation?.macd_signal || '').toLowerCase()}`;
+                    
+                    document.getElementById('trend').textContent = technical.interpretation?.trend || '--';
+                    document.getElementById('trend').className = `signal ${(technical.interpretation?.trend || '').toLowerCase()}`;
+                    
+                    document.getElementById('bbSignal').textContent = technical.interpretation?.bb_signal || '--';
+                    document.getElementById('bbSignal').className = `signal ${(technical.interpretation?.bb_signal || '').toLowerCase()}`;
+                }
+
+                showResults();
+            } catch (error) {
+                showError(`Error displaying results: ${error.message}`);
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingIndicator').classList.add('hidden');
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+
+        function showResults() {
+            document.getElementById('resultsContainer').classList.remove('hidden');
+        }
+
+        function hideResults() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+        }
+
+        // Allow Enter key to trigger analysis
+        document.getElementById('symbolInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeStock();
+            }
+        });
+
+        // Auto-analyze AAPL on page load
+        window.addEventListener('load', function() {
+            analyzeStock();
+        });
+    </script>
+</body>
+</html>

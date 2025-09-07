@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - ALPHAVANTAGE_API_KEY=${ALPHAVANTAGE_API_KEY:-demo}
+      - REDIS_HOST=redis
+    volumes:
+      - ./model:/app/model
+      - ./data:/app/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:
